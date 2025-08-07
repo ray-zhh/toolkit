@@ -42,25 +42,27 @@ func FolderExistsOrCreate(dirname string) (bool, error) {
 
 // ListFiles 获取目录下所有文件
 func ListFiles(path string, recursive bool) ([]string, error) {
-	var ret = make([]string, 0)
+	var results = make([]string, 0)
 	// 读取全部目录
-	catalog, err := ioutil.ReadDir(path)
+	fileInfos, err := ioutil.ReadDir(path)
 	if err != nil {
 		return nil, err
 	}
-	for _, value := range catalog {
+	for _, fileInfo := range fileInfos {
 		// 保存当前目录
-		crtPath := path + string(os.PathSeparator) + value.Name()
-		ret = append(ret, crtPath)
+		filename := path + string(os.PathSeparator) + fileInfo.Name()
+		if !fileInfo.IsDir() {
+			results = append(results, filename)
+		}
 
 		// 递归获取
-		if recursive && value.IsDir() {
-			folder, err := ListFiles(crtPath, recursive)
+		if recursive && fileInfo.IsDir() {
+			files, err := ListFiles(filename, recursive)
 			if err != nil {
 				return nil, err
 			}
-			ret = append(ret, folder...)
+			results = append(results, files...)
 		}
 	}
-	return ret, nil
+	return results, nil
 }
