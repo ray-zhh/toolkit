@@ -1,6 +1,9 @@
 package str
 
-import "strconv"
+import (
+	"encoding/json"
+	"strconv"
+)
 
 func ParseInt64(val string) int64 {
 	ret, err := strconv.ParseInt(val, 10, 64)
@@ -16,4 +19,9 @@ func ParseFloat(val string) float64 {
 		return 0
 	}
 	return ret
+}
+
+func Struct2JsonStr(v interface{}) string {
+	jsonBytes, _ := json.Marshal(v)
+	return string(jsonBytes)
 }
